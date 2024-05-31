@@ -4,10 +4,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'custom': ['title', 'sans-serif'],
+        'custom': ['KaushanScript', 'sans-serif'],
+        'basic': ['Dovemayo', 'sans-serif'],
       },
       textShadow: {
-        'outline': '0 0 12px red',
+        'outline': '0 0 15px red',
       },
     },
   },
@@ -15,7 +16,7 @@ module.exports = {
     function ({ addUtilities }) {
       const newUtilities = {
         '.text-outline': {
-          textShadow: '0 0 12px red',
+          textShadow: '0 0 15px red',
         },
       }
       addUtilities(newUtilities)
