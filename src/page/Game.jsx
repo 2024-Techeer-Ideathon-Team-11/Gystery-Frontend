@@ -1,23 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Background from '../components/Background';
 import death from '../image/death.png';
 import defaultReaper from '../image/defaultReaper.png';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ClearIcon from '@mui/icons-material/Clear';
+import { getStartGame, postAnswer, postQuestion, getHint } from '../api/game';
+import { useNavigate } from 'react-router-dom';
 
 function Game() {
+  const navigate = useNavigate();
   const [hash, setHash] = useState(''); // 게임 해시
-  const [questionList, setQuestionList] = useState([
-    'What is your name?',
-    'How old are you?',
-  ]); // 예시 데이터
-  const [answerList, setAnswerList] = useState([
-    'My name is John.',
-    'I am 25 years old.',
-  ]); // 예시 데이터
+  const [questionList, setQuestionList] = useState([]); // 예시 데이터
+  const [answerList, setAnswerList] = useState([]); // 예시 데이터
   const [hintCount, setHintCount] = useState(0); // 힌트 사용 횟수
   const [questionCount, setQuestionCount] = useState(0); // 질문 번호
-  const [deathCount, setDeathCount] = useState(0); // 오답 카운트
+  const [deathCount, setDeathCount] = useState(8); // 오답 카운트
   const [modalIsOpen, setModalIsOpen] = useState(false); // 모달 오픈 여부
   const [menuIsOpen, setMenuIsOpen] = useState(false); // 드롭다운 메뉴 오픈 여부
   const [isEnterAnswer, setIsEnterAnswer] = useState(false); // 답변 입력 여부
@@ -25,6 +22,87 @@ function Game() {
   const [enterSentence, setEnterSentence] = useState(''); // 사용자가 입력한 질문 및 답변
   const [gameQuestion, setGameQuestion] = useState(''); // 게임 질문
   const [hint, setHint] = useState(''); // 힌트
+
+  useEffect(() => {
+    setQuestionList([]);
+    setAnswerList([]);
+    setHintCount(0);
+    setQuestionCount(0);
+    setDeathCount(0);
+    setModalIsOpen(false);
+    setMenuIsOpen(false);
+    setIsEnterAnswer(false);
+    setMenuType(0);
+    setEnterSentence('');
+    setGameQuestion('');
+    setHint('');
+    const fetchData = async () => {
+      try {
+        const data = await getStartGame();
+        setHash(data.id);
+        setGameQuestion(data.quiz);
+        console.log('data : ', data);
+      } catch (error) {
+        console.log('error : ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSubmit = () => {
+    setEnterSentence('');
+    if (isEnterAnswer) {
+      const fetchData = async () => {
+        try {
+          const data = await postAnswer(hash, enterSentence);
+          if (data.isCorrect === true) {
+            navigate('/game/success');
+          } else {
+            if (deathCount === 9) {
+              alert('사신이 당신을 데려갔습니다.');
+              navigate('/game/fail');
+              return;
+            }
+            alert('오답입니다.');
+            setDeathCount(deathCount + 1);
+            setIsEnterAnswer(false);
+          }
+        } catch (error) {
+          console.log('error : ', error);
+        }
+      };
+      fetchData();
+    } else {
+      if (questionCount === 19) {
+        setIsEnterAnswer(true);
+      } else if (questionCount === 20) {
+        setIsEnterAnswer(true);
+        return;
+      }
+      const fetchData = async () => {
+        try {
+          const data = await postQuestion(hash, enterSentence);
+          return data;
+        } catch (error) {
+          console.log('error : ', error);
+        }
+      };
+      fetchData().then((data) => {
+        console.log('data : ', data);
+        setAnswerList([...answerList, data.answer]);
+        setQuestionList([...questionList, enterSentence]);
+      });
+      setQuestionCount(questionCount + 1);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+  console.log('questionCount : ', questionCount);
   return (
     <div className="flex flex-row w-full h-full justify-center">
       <Background type="" />
@@ -106,14 +184,12 @@ function Game() {
                 placeholder="질문을 입력하세요"
                 value={enterSentence}
                 onChange={(e) => setEnterSentence(e.target.value)}
+                onKeyPress={handleKeyPress}
               />
 
               <button
                 className="w-1/12 h-1/12 border-2 border-white bg-black bg-opacity-70 rounded-lg p-2 text-sm m-2 focus:border-white"
-                onClick={() => {
-                  setEnterSentence('');
-                  setQuestionCount(questionCount + 1);
-                }}
+                onClick={handleSubmit}
               >
                 제출
               </button>
@@ -151,6 +227,15 @@ function Game() {
                           alert('힌트 3번을 모두 사용하셨습니다.');
                           return;
                         }
+                        const fetchData = async () => {
+                          try {
+                            const data = await getHint(hash, hintCount + 1);
+                            setHint(data.hint);
+                          } catch (error) {
+                            console.log('error : ', error);
+                          }
+                        };
+                        fetchData();
                         setHintCount(hintCount + 1);
                         setModalIsOpen(true);
                         setMenuType(2);
@@ -187,15 +272,15 @@ function Game() {
             </div>
             <div className="flex w-3/5 h-1/6 border-2 border-white bg-black bg-opacity-70 rounded-lg rounded-tl-none overflow-y-auto p-2 items-center m-2">
               Q{questionCount} : &nbsp;
-              {questionList[questionCount]
-                ? questionList[questionCount]
-                : '질문이 없습니다.'}
+              {questionList[questionCount - 1]
+                ? questionList[questionCount - 1]
+                : '로딩중...'}
             </div>
-            <div className="flex w-3/5 h-1/6 border-2 border-white bg-black bg-opacity-70 rounded-lg rounded-bl-none overflow-y-auto p-2 items-center m-2">
+            <div className="flex w-3/5 h-1/6 border-2 border-white bg-black bg-opacity-70 rounded-lg rounded-bl-none overflow-y-auto p-2 py-8 items-center m-2">
               A{questionCount} : &nbsp;
-              {answerList[questionCount]
-                ? answerList[questionCount]
-                : '답변이 없습니다.'}
+              {answerList[questionCount - 1]
+                ? answerList[questionCount - 1]
+                : ''}
             </div>
             <div className="w-full flex flex-row">
               {isEnterAnswer ? (
@@ -205,6 +290,7 @@ function Game() {
                   placeholder="정답을 입력하세요"
                   value={enterSentence}
                   onChange={(e) => setEnterSentence(e.target.value)}
+                  onKeyPress={handleKeyPress}
                 />
               ) : (
                 <input
@@ -213,20 +299,14 @@ function Game() {
                   placeholder="질문을 입력하세요"
                   value={enterSentence}
                   onChange={(e) => setEnterSentence(e.target.value)}
+                  onKeyPress={handleKeyPress}
                 />
               )}
 
               <button
                 className="w-1/12 h-1/12 border-2 border-white bg-black bg-opacity-70 rounded-lg p-2 text-sm m-2 focus:border-white"
                 onClick={() => {
-                  setEnterSentence('');
-                  if (isEnterAnswer) {
-                  } else {
-                    if (questionCount === 19) {
-                      setIsEnterAnswer(true);
-                    }
-                    setQuestionCount(questionCount + 1);
-                  }
+                  handleSubmit();
                 }}
               >
                 제출
