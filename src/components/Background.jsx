@@ -3,7 +3,7 @@ import background from '../image/backgrouond.png';
 
 function Background(type) {
   return (
-    <div className="absolute w-screen h-screen flex">
+    <div className="absolute w-screen h-screen flex -z-10">
       <img
         className="w-screen h-screen flex"
         src={background}
