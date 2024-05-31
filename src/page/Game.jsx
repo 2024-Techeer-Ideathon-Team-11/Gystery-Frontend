@@ -1,5 +1,5 @@
 import React from 'react';
-import Background from '../components/Background';
+import Background from '../components/BackgroundComponent';
 
 function Game(props) {
   return (
