@@ -10,9 +10,7 @@ function Background(type) {
         alt="background"
       />
       {type !== 'main' && (
-        <div className="flex fixed w-screen h-screen left-0 top-0 bg-black bg-opacity-60 z-10">
-          asdfasdf
-        </div>
+        <div className="flex fixed w-screen h-screen left-0 top-0 bg-black bg-opacity-60 z-10"></div>
       )}
     </div>
   );
