@@ -3,7 +3,7 @@ import Background from '../components/Background';
 
 function Game(props) {
   return (
-    <div>
+    <div className="flex w-full h-full">
       <Background type="" />
     </div>
   );
