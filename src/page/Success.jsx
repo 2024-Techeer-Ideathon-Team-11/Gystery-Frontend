@@ -19,7 +19,9 @@ const Success = () => {
       <picture className={'h-full'}>
         <img className={'h-full'} src={reaper} alt="" />
       </picture>
-      <div className={'absolute bottom-[20%] text-8xl'}>Success</div>
+      <div className={'absolute bottom-[20%] text-8xl font-custom'}>
+        Success
+      </div>
       <div
         onClick={goHome}
         className={

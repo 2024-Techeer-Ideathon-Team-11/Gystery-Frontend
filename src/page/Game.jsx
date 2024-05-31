@@ -4,17 +4,23 @@ import death from '../image/death.png';
 import defaultReaper from '../image/defaultReaper.png';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ClearIcon from '@mui/icons-material/Clear';
-import { getStartGame, postAnswer, postQuestion, getHint } from '../api/game';
+import {
+  getStartGame,
+  postAnswer,
+  postQuestion,
+  getHint,
+  postComment,
+} from '../api/game';
 import { useNavigate } from 'react-router-dom';
 
 function Game() {
   const navigate = useNavigate();
   const [hash, setHash] = useState(''); // 게임 해시
-  const [questionList, setQuestionList] = useState([]); // 예시 데이터
-  const [answerList, setAnswerList] = useState([]); // 예시 데이터
+  const [questionList, setQuestionList] = useState([]); // 질문 목록
+  const [answerList, setAnswerList] = useState([]); // 답변 목록
   const [hintCount, setHintCount] = useState(0); // 힌트 사용 횟수
   const [questionCount, setQuestionCount] = useState(0); // 질문 번호
-  const [deathCount, setDeathCount] = useState(8); // 오답 카운트
+  const [deathCount, setDeathCount] = useState(0); // 오답 카운트
   const [modalIsOpen, setModalIsOpen] = useState(false); // 모달 오픈 여부
   const [menuIsOpen, setMenuIsOpen] = useState(false); // 드롭다운 메뉴 오픈 여부
   const [isEnterAnswer, setIsEnterAnswer] = useState(false); // 답변 입력 여부
@@ -39,9 +45,12 @@ function Game() {
     const fetchData = async () => {
       try {
         const data = await getStartGame();
+        const comment = await postComment(data.id);
+        setTimeout(() => {
+          console.log('comment : ', comment);
+        }, 2000);
         setHash(data.id);
         setGameQuestion(data.quiz);
-        console.log('data : ', data);
       } catch (error) {
         console.log('error : ', error);
       }
@@ -160,7 +169,11 @@ function Game() {
                     <p>{hint}</p>
                   </div>
                 )}
-                {menuType === 3 && <div className="-mt-8">{gameQuestion}</div>}
+                {menuType === 3 && (
+                  <div className="-mt-8">
+                    {gameQuestion ? gameQuestion : '로딩중...'}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -177,7 +190,7 @@ function Game() {
         {questionCount === 0 && (
           <div className="flex w-2/3 h-full flex-col justify-center items-start ">
             <div className="flex w-3/5 h-1/2 border-2 border-white bg-black bg-opacity-70 rounded-lg rounded-tl-none overflow-y-auto p-2 items-center m-2 overflow-auto">
-              {gameQuestion}
+              {gameQuestion ? gameQuestion : '로딩중...'}
             </div>
             <div className="flex flex-row w-full">
               <input

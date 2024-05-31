@@ -37,9 +37,9 @@ export const getHint = async (id, num) => {
   }
 };
 
-export const postComment = async (hash) => {
+export const postComment = async (id) => {
   try {
-    const response = await api.post('/comment', { hash });
+    const response = await api.post('/comment', { id });
     return response.data;
   } catch (error) {
     console.error(error);

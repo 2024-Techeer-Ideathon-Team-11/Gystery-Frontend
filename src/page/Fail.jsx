@@ -27,8 +27,10 @@ function Fail() {
     <div className="flex flex-col w-screen h-screen overflow-hidden justify-center items-center">
       <Background type="" />
       <img src={fierceReaper} alt="fierceReaper" className="fixed w-1/3 z-0" />
-      <h1 className="text-4xl text-white z-10 mt-32">Fail</h1>
-      <div className="flex w-3/5 h-2/5 border-2 border-white bg-black bg-opacity-80 rounded-lg overflow-y-auto p-2 items-center m-2 z-10 text-lg">
+      <h1 className="text-white z-20 -mb-12 mt-60 font-custom text-8xl">
+        Fail
+      </h1>
+      <div className="flex w-3/5 h-2/5 border-2 border-white font-basic bg-black bg-opacity-80 rounded-lg overflow-y-auto p-2 items-center m-2 z-10 text-lg">
         {isOpenCorrect ? <p>{comment}</p> : <p>당신의 여정은 실패했습니다.</p>}
       </div>
       <div className="flex flex-row w-3/5 justify-center items-center">
