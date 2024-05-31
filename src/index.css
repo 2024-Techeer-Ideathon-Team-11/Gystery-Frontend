@@ -4,8 +4,15 @@
 
 
 @font-face {
-    font-family: 'title';
-    src: url('./font/title.ttf') format('truetype');
+    font-family: 'KaushanScript';
+    src: url('./font/KaushanScript.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'Dovemayo';
+    src: url('./font/Dovemayo.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
   }
