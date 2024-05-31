@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<Main />} />
         <Route path="/game" element={<Game />} />
         <Route path="/game/success" element={<Success />} />
-        <Route path="/game/fail" element={<Fail />} />
+        <Route path="/game/fail/:hash" element={<Fail />} />
       </Routes>
     </Router>
   );

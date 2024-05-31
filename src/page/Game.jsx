@@ -61,7 +61,7 @@ function Game() {
           } else {
             if (deathCount === 9) {
               alert('사신이 당신을 데려갔습니다.');
-              navigate('/game/fail');
+              navigate(`/game/fail/${hash}`);
               return;
             }
             alert('오답입니다.');
@@ -104,7 +104,7 @@ function Game() {
   };
   console.log('questionCount : ', questionCount);
   return (
-    <div className="flex flex-row w-full h-full justify-center">
+    <div className="flex flex-row w-full h-full justify-center font-basic">
       <Background type="" />
       <div className="flex flex-row w-screen h-screen items-center justify-center">
         {/* 모달 */}
@@ -118,7 +118,7 @@ function Game() {
           >
             {/* 모달창 */}
             <div
-              className="flex flex-col w-1/2 h-1/2 bg-zinc-900 rounded-lg shadow-lg p-4 border-2 border-zinc-400"
+              className="flex flex-col w-1/2 h-1/2 bg-zinc-900 rounded-lg shadow-lg p-4 mb-4 border-2 border-zinc-400"
               onClick={(e) => e.stopPropagation()}
             >
               {/* 취소 */}
@@ -134,10 +134,10 @@ function Game() {
                 </button>
               </div>
               {/* 모달창 본문 */}
-              <div className="flex flex-col w-full h-full justify-center overflow-auto">
+              <div className="flex flex-col w-full h-full justify-center overflow-auto py-8">
                 {menuType === 1 && (
                   <div>
-                    <h2 className="text-2xl mb-6">질문 목록</h2>
+                    <h2 className="text-2xl mt-8 mb-6">질문 목록</h2>
                     {questionList.map((question, index) => (
                       <div key={index} className="flex flex-col">
                         <div className="font-bold">
@@ -154,11 +154,13 @@ function Game() {
                 )}
                 {menuType === 2 && (
                   <div>
-                    <h2 className="text-2xl">{hintCount}번째 힌트</h2>
+                    <h2 className="text-2xl -mt-16 mb-8">
+                      {hintCount}번째 힌트
+                    </h2>
                     <p>{hint}</p>
                   </div>
                 )}
-                {menuType === 3 && <div>{gameQuestion}</div>}
+                {menuType === 3 && <div className="-mt-8">{gameQuestion}</div>}
               </div>
             </div>
           </div>
